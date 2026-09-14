@@ -12,7 +12,9 @@ public class BaseTest {
 	public void before() {
 		GCONST.setServerName("ecology");
 		String fileSeparator = File.separator;
-		GCONST.setRootPath(System.getProperty("user.dir")+fileSeparator+"ecology"+fileSeparator);
+		String sysPath = System.getProperty("user.dir")+fileSeparator+"ecology"+fileSeparator;
+		System.out.println("sysPath===>"+sysPath);
+		GCONST.setRootPath(sysPath);
 	}
 
 }

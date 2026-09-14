@@ -50,4 +50,5 @@ tmp/
 
 # Local Ecology runtime dependencies (a local junction to WEB-INF/lib)
 **/lib
+**/sqllog/
 weaver.properties
