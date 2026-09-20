@@ -23,28 +23,10 @@ OA服务器运维脚本[查看](http://note.youdao.com/s/JhfblPlf)
   - 项目地址：https://github.com/solelyr/ecology9-second-demo.git
 2. 设置项目目录
   - 建议在 `com.engine` 路径下再设置自定义的项目目录
-3. 删除非必要的pom.xml，以下部分内容为个人私有使用，可自行删除（19-31行）。
-   ```
-   <distributionManagement>
-   <repository>
-   <id>nexus-solelyr-public</id>
-   <url>https://nexus.solelyz.cn/repository/maven-public/</url>
-   </repository>
-   </distributionManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>ecology9.second</groupId>
-            <artifactId>weaver</artifactId>
-            <version>9.00.2601.01</version>
-        </dependency>
-        <dependency>
-            <groupId>ecology9.second</groupId>
-            <artifactId>_solelyr</artifactId>
-            <version>26.09.0.1</version>
-        </dependency>
-    </dependencies>
-   ```
+3. 使用 Gradle 导入项目
+  - IntelliJ IDEA 中选择根目录的 `settings.gradle` 导入项目
+  - 项目固定使用 JDK 8，并通过 Gradle Wrapper 统一 Gradle 版本
+  - `build.gradle` 中的私有 Nexus 仓库及 `_solelyr` 依赖为个人私有配置，不需要时可自行删除
 4. 拷贝必要的 JAR 包依赖
    这个很重要，需要与客户环境的KB补丁包保持一致
   - 进入服务器上的 `/weaver/ecology/classbean` 目录，执行 `jar -cvf local-ecology.jar ./` 生成对应的 JAR 包，将 JAR 包拷贝到本地项目中
@@ -70,4 +52,5 @@ OA服务器运维脚本[查看](http://note.youdao.com/s/JhfblPlf)
     log4j.additivity.solelyrSecond=false
     ```
 7. 部署至客户环境
-  - 运行maven package 命令，生成对应jar包，将jar包放入客户环境WEB-INF/lib目录下
+  - Windows 运行 `gradlew.bat clean build`，Linux/macOS 运行 `./gradlew clean build`
+  - 将 `build/libs/_demo-26.09.01.jar` 放入客户环境的 `WEB-INF/lib` 目录

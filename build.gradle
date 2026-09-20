@@ -1,0 +1,77 @@
+plugins {
+    id 'java'
+}
+
+group = 'ecology9.second'
+version = '26.09.01'
+
+def weaverVersion = '9.00.2601.01'
+def solelyrVersion = '26.09.0.1'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://nexus.solelyz.cn/repository/maven-public/')
+    }
+    mavenCentral()
+}
+
+// Ecology 的运行库由本地 WEB-INF/lib 提供。显式依赖的项目包在此排除，
+// 避免同一个类同时从 Maven 依赖和本地历史 JAR 进入编译 classpath。
+def ecologyLibs = files(fileTree('ecology/WEB-INF/lib') {
+    include '*.jar'
+    exclude '_solelyr-*.jar'
+}.files.sort { left, right -> left.name <=> right.name })
+
+dependencies {
+    implementation "ecology9.second:weaver:${weaverVersion}"
+    implementation "ecology9.second:_solelyr:${solelyrVersion}"
+
+    // 普通 jar 任务不会将这些 JAR 打进产物；它们只参与编译、运行和测试。
+    implementation ecologyLibs
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.register('verifyEcologyLibs') {
+    group = 'verification'
+    description = '检查本地 Ecology WEB-INF/lib 依赖目录。'
+    doLast {
+        File libDirectory = file('ecology/WEB-INF/lib')
+        if (!libDirectory.isDirectory()) {
+            throw new GradleException("Ecology依赖目录不存在：${libDirectory.absolutePath}")
+        }
+        if (ecologyLibs.files.isEmpty()) {
+            throw new GradleException("Ecology依赖目录中没有JAR文件：${libDirectory.absolutePath}")
+        }
+        logger.lifecycle('Ecology本地依赖检查通过，共{}个JAR。', ecologyLibs.files.size())
+    }
+}
+
+tasks.named('compileJava') {
+    dependsOn tasks.named('verifyEcologyLibs')
+}
+
+tasks.withType(Test).configureEach {
+    useJUnit()
+    workingDir = projectDir
+    systemProperty 'file.encoding', 'UTF-8'
+}
+
+tasks.named('jar') {
+    archiveBaseName = rootProject.name
+}
+
+tasks.named('wrapper', Wrapper) {
+    gradleVersion = '8.14.4'
+    distributionType = Wrapper.DistributionType.BIN
+}
