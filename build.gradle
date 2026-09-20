@@ -68,7 +68,7 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.named('jar') {
-    archiveBaseName = rootProject.name
+    archiveBaseName = '_ecology9-second-demo'
 }
 
 tasks.named('wrapper', Wrapper) {

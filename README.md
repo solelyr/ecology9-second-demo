@@ -53,4 +53,4 @@ OA服务器运维脚本[查看](http://note.youdao.com/s/JhfblPlf)
     ```
 7. 部署至客户环境
   - Windows 运行 `gradlew.bat clean build`，Linux/macOS 运行 `./gradlew clean build`
-  - 将 `build/libs/_demo-26.09.01.jar` 放入客户环境的 `WEB-INF/lib` 目录
+  - 将 `build/libs/_ecology9-second-demo-26.09.01.jar` 放入客户环境的 `WEB-INF/lib` 目录
